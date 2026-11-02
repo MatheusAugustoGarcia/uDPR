@@ -621,6 +621,11 @@ namespace Dpr.Field
             return SetEncountData(poke_param, inRodType, inFldSpa, inData, FISHING_ENCOUNT, BTL_CLIENT_ID.BTL_CLIENT_ENEMY1, ref battle_param);
         }
 		private static bool MapEncountCheck(uint per, int attr, bool inGridmove) {
+#if !SWITCH
+            // PC cheat: skip only movement-based random rolls; keep scripted/radar encounters.
+            if (Udpr.Cheats.CheatService.RandomEncountersDisabled)
+                return false;
+#endif
             int failUpRate = (int)GameData.DataManager.FieldCommonParam[(int)FieldCommon.ParamIndx.EncFaileUpRate].param;
             uint calcPer = (uint)GameData.DataManager.FieldCommonParam[(int)FieldCommon.ParamIndx.EncBaseRate].param;
             if (inGridmove || !EncountWalkCheck(PlayerWork.WalkEncountCount, per << CALC_SHIFT))

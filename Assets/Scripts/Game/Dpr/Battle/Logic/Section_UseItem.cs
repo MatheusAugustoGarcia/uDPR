@@ -34,7 +34,25 @@ namespace Dpr.Battle.Logic
 					break;
 				case TrainerItemResult.CAPTURED:
 				{
-					byte userClientID = MainModule.PokeIDtoClientID(description.poke.GetID());
+#if !SWITCH
+                    // A successful trainer throw must not request QUIT_CAPTURE.
+                    // Snapshot before HpZero; use normal dead records for EXP and replacement.
+                    if (GetCompetitor() == BtlCompetitor.BTL_COMPETITOR_TRAINER)
+                    {
+                        var target = GetPokeParam(capContext.targetPos);
+                        Udpr.Cheats.TrainerCaptureCheat.Store(GetMainModule().GetBattleSetupParam(), target);
+                        putCapturedCommand(capContext);
+                        updateZukanData(capContext);
+                        target.ClearDeadCause();
+                        GetServerCommandPutter().HpZero(target);
+                        var dead = new Section_CheckPokeDead.Description();
+                        dead.poke = target;
+                        dead.isCaptured = true;
+                        GetSectionContainer().GetSection_CheckPokeDead().Execute(new Section_CheckPokeDead.Result(), dead);
+                        break;
+                    }
+#endif
+                    byte userClientID = MainModule.PokeIDtoClientID(description.poke.GetID());
 					pResult.isExpGet = expGetByCaptured(userClientID, capContext.targetPos);
 					// putCapturedCommand is inlined here (0217545c)
 					putCapturedCommand(capContext);

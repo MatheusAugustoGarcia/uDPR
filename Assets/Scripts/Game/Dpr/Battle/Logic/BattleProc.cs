@@ -160,6 +160,9 @@ namespace Dpr.Battle.Logic
                 PlayerWork.capturedBallCountTvTopic = 0;
             }
 
+#if !SWITCH
+            yield return Udpr.Cheats.TrainerCaptureCheat.Deliver(setupParam);
+#endif
             SmartPoint.Components.Fader.valid = true;
             SmartPoint.Components.Fader.FadeOut();
             while (SmartPoint.Components.Fader.isBusy)

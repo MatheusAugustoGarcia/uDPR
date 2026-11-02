@@ -121,12 +121,22 @@ namespace Dpr.Battle.Logic
 			pIsCaptured = false;
 			pCaptureContext.Clear();
 			BTL_POKEPARAM targetPoke = decideBallTarget(out BtlPokePos targetPos, userPoke);
-			if (GetCompetitor() != BtlCompetitor.BTL_COMPETITOR_WILD)
+            bool trainerCapture = false;
+#if !SWITCH
+            trainerCapture = Udpr.Cheats.TrainerCaptureCheat.CanCapture(GetMainModule(), userPoke);
+            if (trainerCapture && !Udpr.Cheats.TrainerCaptureCheat.HasCapacity(GetMainModule().GetBattleSetupParam()))
+            {
+                GetServerCommandPutter().Message_Std((ushort)BTL_STRID_STD.Ball_NG2);
+                return;
+            }
+#endif
+            if (GetCompetitor() != BtlCompetitor.BTL_COMPETITOR_WILD && !trainerCapture)
 			{
 				useBallForbidden(itemID, targetPos, BallThrowForbiddenCause.VS_TRAINER);
 				return;
 			}
-			if (GetMainModule().GetCaptureLevelCap() < (byte)targetPoke.GetValue(BTL_POKEPARAM.ValueID.BPP_LEVEL))
+            if (targetPoke == null || targetPos == BtlPokePos.POS_NULL) return;
+            if (GetMainModule().GetCaptureLevelCap() < (byte)targetPoke.GetValue(BTL_POKEPARAM.ValueID.BPP_LEVEL))
 			{
 				useBallForbidden(itemID, targetPos, BallThrowForbiddenCause.LEVEL_CAP);
 				return;

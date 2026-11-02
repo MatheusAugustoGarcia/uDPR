@@ -33,6 +33,11 @@ namespace Dpr.Battle.Logic
 			checkCapureSuccessByRandom(out result.isCaptured, out result.yureCount, captureValue, result.isCritical);
 		}
 		private static bool isMustCapureSuccess(global::Dpr.Battle.Logic.MainModule mainModule, ushort itemID) {
+#if !SWITCH
+            // Session-only PC toggle; the caller still enforces whether a ball can be used.
+            if (Udpr.Cheats.CheatService.GuaranteedCatch)
+                return true;
+#endif
 			BtlCompetitor competitor = mainModule.GetCompetitor(false);
 			if (itemID == (ushort)ItemNo.MASUTAABOORU || competitor == BtlCompetitor.BTL_COMPETITOR_DEMO_CAPTURE)
 				return true;

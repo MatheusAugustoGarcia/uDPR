@@ -21,7 +21,11 @@ namespace Dpr.Battle.Logic
 			byte deadCausePokeID = poke.GetDeadCausePokeID();
 			DamageCause deadCause = poke.GetDeadCause();
 			bool isKillCountInc = isKillCountIncrementEnable(deadPokeID, deadCausePokeID, deadCause);
-			if (needDeadAct(poke))
+            bool captured = false;
+#if !SWITCH
+            captured = description.isCaptured;
+#endif
+            if (!captured && needDeadAct(poke))
 				GetServerCommandPutter().Act_Dead(deadPokeID, isKillCountEffectEnable(isKillCountInc));
 
 			removePokeDependEffect(poke);
@@ -34,7 +38,7 @@ namespace Dpr.Battle.Logic
 				GetServerCommandPutter().IncKillCount(deadCausePokeID);
 
 			updateRecord(deadPokeID);
-			updateZukanData(poke);
+			if (!captured) updateZukanData(poke);
 			notifyPokeMemory(deadPokeID, deadCausePokeID);
 			setPokeMemories(deadPokeID, deadCausePokeID);
 			GetEventLauncher().Event_PokeDeadAfter(deadPokeID);
@@ -171,7 +175,10 @@ namespace Dpr.Battle.Logic
 		public class Description
 		{
 			public global::Dpr.Battle.Logic.BTL_POKEPARAM poke;
-			public bool isDeadMessageDisplay;
+            public bool isDeadMessageDisplay;
+#if !SWITCH
+            public bool isCaptured;
+#endif
 			public global::Dpr.Battle.Logic.PGLRecord.RecParam pPglParam;
 			public Description() {
 				poke = null;

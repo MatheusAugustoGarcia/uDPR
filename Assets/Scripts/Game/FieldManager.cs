@@ -1245,6 +1245,9 @@ public class FieldManager
             case EncountResult.BtlType.Single:
             {
                 ResultSetUpWildBattle(result, btlBgIndex, out PokeParty party, out int safariBall);
+#if !SWITCH
+                Udpr.Cheats.CheatService.ApplyShinyToRandomEncounter(party);
+#endif
                 ArenaID arenaID = GameManager.mapInfo[(int)PlayerWork.zoneID].BattleBg[btlBgIndex];
                 GetLegendPokeEncountInfo(party.GetMemberPointer(0), out string encSeq, ref arenaID, out string bgm, out BattleSetupEffectId setupEffect);
                 if (!string.IsNullOrEmpty(encSeq))
@@ -1259,6 +1262,9 @@ public class FieldManager
             {
                 // @0179dd60: no legend lookup; the setup param is fetched before mapInfo; the partner trainer is passed.
                 ResultSetUpWildBattle(result, btlBgIndex, out PokeParty party, out int safariBall);
+#if !SWITCH
+                Udpr.Cheats.CheatService.ApplyShinyToRandomEncounter(party);
+#endif
                 EncountTools.SetupBattleWild(PlayerWork.battleSetupParam, party, GameManager.mapInfo[(int)PlayerWork.zoneID].BattleBg[btlBgIndex],
                     attributeEx.AttributeEx, GetBatleWeather(), PlayerWork.IsFormSwim(), false, result.Partner, false, safariBall, false, false, null, 0, false);
                 break;
@@ -1267,6 +1273,9 @@ public class FieldManager
             case EncountResult.BtlType.Safari:
             {
                 ResultSetUpWildBattle(result, btlBgIndex, out PokeParty party, out int safariBall);
+#if !SWITCH
+                Udpr.Cheats.CheatService.ApplyShinyToRandomEncounter(party);
+#endif
                 EncountTools.SetupBattleWild(PlayerWork.battleSetupParam, party, GameManager.mapInfo[(int)PlayerWork.zoneID].BattleBg[btlBgIndex],
                     attributeEx.AttributeEx, GetBatleWeather(), PlayerWork.IsFormSwim(), false, TrainerID.NONE, false, safariBall, false, false, null, 0, false);
                 break;
@@ -1316,6 +1325,9 @@ public class FieldManager
                 PlayerWork.MovePokemonIndex = result.MP_SaveIndex;
                 var party = new PokeParty();
                 party.AddMember(pp);
+#if !SWITCH
+                Udpr.Cheats.CheatService.ApplyShinyToRandomEncounter(party);
+#endif
 
                 ArenaID arenaID = GameManager.mapInfo[(int)PlayerWork.zoneID].BattleBg[btlBgIndex];
                 GetLegendPokeEncountInfo(party.GetMemberPointer(0), out string encSeq, ref arenaID, out string bgm, out BattleSetupEffectId setupEffect);

@@ -302,7 +302,28 @@ namespace Dpr.Battle.View.Systems
                     break;
 
                 case 8:
+#if !SWITCH
+                    if (GetBattleCompetitor() == BtlCompetitor.BTL_COMPETITOR_TRAINER)
+                    {
+                        if (!WaitSequence()) return false;
+                        // Capture already hid the target: clean up without a second animation.
+                        m_deadActParam.vpos = m_comTargetPoke[1];
+                        GetHUD().OnHUDEvent(HUDEventID.kDeadActStart, this);
+                        m_iPtrCharacterSystem.StartDelete(GetPokeModel(m_comTargetPoke[1]));
+                        m_subSequence = 10;
+                        return false;
+                    }
+#endif
                     return WaitSequence();
+#if !SWITCH
+                case 10:
+                    if (!m_iPtrCharacterSystem.IsFinishDelete(GetPokeModel(m_comTargetPoke[1])))
+                        return false;
+                    ResetDefaultCamera();
+                    ResetQualitySettings();
+                    SetVisibleBattleObject(true);
+                    return true;
+#endif
 
                 case 9:
                     if (!WaitSequence())
